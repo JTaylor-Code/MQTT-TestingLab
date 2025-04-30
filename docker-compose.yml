@@ -1,0 +1,58 @@
+services:
+  broker:
+    image: eclipse-mosquitto:2
+    volumes:
+      - ./broker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./broker/password.txt:/mosquitto/config/password.txt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - mqtt_net
+
+  sensor:
+    build: ./sensor
+    depends_on:
+      - broker
+    networks:
+      - mqtt_net
+
+  subscriber:
+    build: ./subscriber
+    depends_on:
+      - broker
+    networks:
+      - mqtt_net
+
+  attacker-bruteforce:
+    build: ./attacker
+    command: ["python3", "/app/brute_force.py"]
+    depends_on:
+      - broker
+    networks:
+      - mqtt_net
+
+  attacker-inject:
+    build: ./attacker
+    command: ["python3", "/app/inject.py"]
+    depends_on:
+      - broker
+    networks:
+      - mqtt_net
+
+  attacker-dos:
+    build: ./attacker
+    command: ["python3", "/app/dos.py"]
+    depends_on:
+      - broker
+    networks:
+      - mqtt_net
+    
+
+
+networks:
+  mqtt_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.20.0.0/16"
