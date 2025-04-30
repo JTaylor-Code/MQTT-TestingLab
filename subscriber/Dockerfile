@@ -3,3 +3,4 @@ WORKDIR /app
 RUN pip install paho-mqtt==1.6.1
 COPY subscriber.py .
 CMD ["python3", "subscriber.py"]
+
