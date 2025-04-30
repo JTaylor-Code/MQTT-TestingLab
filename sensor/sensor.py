@@ -8,11 +8,10 @@ TOPIC  = 'sensor/temperature'
 
 client = mqtt.Client(client_id='sensor')
 client.username_pw_set("sensor", "password")
-client.connect(BROKER, PORT)       
+client.connect(BROKER, PORT)        # <— no timeout arg!
 
 while True:
-  temp = round(20 + random.random()*10, 2)
-  client.publish(TOPIC, temp)
-  print(f"[SENSOR] Published: {temp}", flush=True)
-  time.sleep(5)
-
+    temp = round(20 + random.random()*10, 2)
+    client.publish(TOPIC, temp)
+    print(f"[SENSOR] Published: {temp}", flush=True)
+    time.sleep(5)
